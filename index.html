@@ -2,220 +2,295 @@
 <html lang="uk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b2a23">
 <title>Smart Meal Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Layout: control bar → summary strip → one working panel (меню / покупки / готування). Beet accent, cool paper neutrals. */
+/* One dark forest world, single theme by choice: frosted-glass cards over blurred leaf shapes, serif display, sage pill actions, app-style bottom nav. */
 :root{
-  --bg:#f5f6f4; --surface:#ffffff; --ink:#1d2421; --muted:#5d6762; --line:#dfe3df;
-  --accent:#a3285f; --accent-soft:#f6e4ec; --good:#2f7a4f; --warn:#b26a00;
-  --p:#2f6f8f; --f:#c08a1e; --c:#7a9a3a;
-  --display:"Unbounded","Onest",system-ui,sans-serif; --body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
-  color-scheme:light;
+  --bg:#17241e; --bg2:#22352c; --glass:rgba(255,255,255,.07); --glass-2:rgba(255,255,255,.11);
+  --edge:rgba(255,255,255,.14); --ink:#eef3ec; --muted:#a9b9ad; --sage:#cfe0b6; --sage-2:#a8c48c; --sage-ink:#1f3326;
+  --leaf:#7fa267; --warn:#e6c27a;
+  --display:"Lora",Georgia,"Times New Roman",serif; --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#141816; --surface:#1c2220; --ink:#e7ece9; --muted:#9aa6a0; --line:#2c3431;
-  --accent:#e2689f; --accent-soft:#3a2230; --good:#6cc28f; --warn:#e2a34a;
-  --p:#6fb3d4; --f:#e0b45a; --c:#a8c96b; color-scheme:dark;}}
-:root[data-theme="dark"]{
-  --bg:#141816; --surface:#1c2220; --ink:#e7ece9; --muted:#9aa6a0; --line:#2c3431;
-  --accent:#e2689f; --accent-soft:#3a2230; --good:#6cc28f; --warn:#e2a34a;
-  --p:#6fb3d4; --f:#e0b45a; --c:#a8c96b; color-scheme:dark;}
 *{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);}
-.wrap{max-width:980px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:18px}
-header{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:end;justify-content:space-between}
-h1{font:700 26px/1.1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
-h1 small{display:block;font:500 14px/1.4 var(--body);color:var(--muted);margin-top:6px;letter-spacing:0}
-.controls{display:flex;flex-wrap:wrap;gap:12px}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:3px;gap:2px}
-.seg button{font:600 14px var(--body);border:0;background:none;color:var(--ink);padding:7px 12px;border-radius:7px;cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
-.seg button:disabled{color:var(--muted);cursor:not-allowed;opacity:.7}
-.seg .lbl{font:500 12px var(--body);color:var(--muted);align-self:center;padding:0 6px 0 8px}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-.tile .k{font-size:12px;color:var(--muted)}
-.tile .v{font:700 22px/1.2 var(--display);font-variant-numeric:tabular-nums;margin-top:4px}
-.tile .s{font-size:13px;color:var(--muted)}
-.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line)}
-.tabs button{font:600 15px var(--body);background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px;color:var(--muted);cursor:pointer}
-.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
-.days{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.days button{font:600 14px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;display:flex;gap:6px;align-items:baseline}
-.days button span{font-weight:400;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
-.days button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
-.dayhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
-.dayhead h2{font:700 18px var(--display);margin:0}
-.macro{display:flex;height:10px;border-radius:5px;overflow:hidden;width:220px;max-width:100%;background:var(--line)}
-.macro i{display:block}
-.legend{display:flex;gap:12px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-.legend b{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
-.meals{display:grid;gap:10px}
-.meal{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:96px 1fr auto;gap:4px 14px;align-items:start}
-.meal .slot{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;padding-top:3px}
-.meal .nm{font-weight:600}
-.meal .it{font-size:14px;color:var(--muted);grid-column:2}
-.meal .kc{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
-.meal .kc small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
-.shopbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
-.progress{flex:1;min-width:200px}
-.progress .t{font-size:13px;color:var(--muted);margin-bottom:4px;font-variant-numeric:tabular-nums}
-.progress .b{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
-.progress .b i{display:block;height:100%;background:var(--good);width:0;transition:width .2s}
-.btn{font:600 14px var(--body);border:1px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;padding:8px 12px;cursor:pointer}
-.btn.primary{background:var(--accent);color:#fff}
-.group h3{font:600 13px var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px}
-.row{display:grid;grid-template-columns:24px 1fr auto auto;gap:10px;align-items:center;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;cursor:pointer}
-.row input{width:18px;height:18px;accent-color:var(--good);margin:0}
-.row .q{color:var(--muted);font-size:14px;white-space:nowrap}
-.row .pr{font-variant-numeric:tabular-nums;font-weight:600;min-width:72px;text-align:right}
-.row.done .n{text-decoration:line-through;color:var(--muted)}
-.pill{font-size:11px;font-weight:600;color:var(--warn);border:1px solid currentColor;border-radius:999px;padding:0 6px;margin-left:6px;white-space:nowrap}
-.total{display:flex;justify-content:space-between;padding:12px;border-top:2px solid var(--ink);margin-top:8px;font-weight:700;font-variant-numeric:tabular-nums}
-.note{font-size:13px;color:var(--muted)}
-.prep{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.card h3{font:700 16px var(--display);margin:0 0 2px}
-.card .when{font-size:13px;color:var(--muted);margin-bottom:8px}
-.card ol{margin:0;padding-left:20px;display:grid;gap:6px}
-.card li{font-size:15px}
-.card li em{font-style:normal;color:var(--muted);font-size:13px;display:block}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+.scene{position:fixed;inset:0;overflow:hidden;z-index:0;background:radial-gradient(120% 80% at 80% 0%,#2d4638 0%,transparent 60%),radial-gradient(90% 70% at 0% 100%,#26392f 0%,transparent 60%),var(--bg)}
+.scene svg{position:absolute;filter:blur(18px);opacity:.55}
+.app{position:relative;z-index:1;max-width:460px;margin:0 auto;min-height:100%;padding:calc(14px + env(safe-area-inset-top)) 16px calc(108px + env(safe-area-inset-bottom));display:grid;gap:16px;align-content:start}
+.glass{background:var(--glass);border:1px solid var(--edge);border-radius:22px;backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);box-shadow:0 10px 30px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.06)}
+.top{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font:600 22px/1 var(--display);letter-spacing:.01em}
+.brand svg{width:28px;height:28px;color:var(--sage)}
+.iconbtn{position:relative;width:44px;height:44px;display:grid;place-items:center;border-radius:14px;border:1px solid var(--edge);background:var(--glass);color:var(--ink);cursor:pointer}
+.iconbtn svg{width:22px;height:22px}
+.badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--sage);color:var(--sage-ink);font:700 11px/20px var(--body);text-align:center;padding:0 5px}
+.hero{position:relative;overflow:hidden;padding:22px 20px 20px;min-height:200px}
+.hero h1{font:600 30px/1.08 var(--display);margin:0;max-width:62%;text-wrap:balance}
+.hero p{color:var(--muted);margin:10px 0 16px;max-width:58%;font-size:14px}
+.hero .art{position:absolute;right:-18px;bottom:-14px;width:190px;height:190px;pointer-events:none}
+.pill{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;background:linear-gradient(180deg,var(--sage),var(--sage-2));color:var(--sage-ink);font:700 14px var(--body);padding:10px 18px;cursor:pointer;box-shadow:0 6px 18px rgba(168,196,140,.25)}
+.pill svg{width:18px;height:18px}
+.pill.big{width:100%;justify-content:center;padding:15px 20px;font-size:16px;position:relative}
+.pill.big svg{position:absolute;right:20px}
+.pill.ghost{background:var(--glass-2);color:var(--ink);box-shadow:none;border:1px solid var(--edge)}
+button:focus-visible,label:focus-within{outline:2px solid var(--sage);outline-offset:2px}
+.sect{display:flex;justify-content:space-between;align-items:baseline;margin:4px 2px -4px}
+.sect h2{font:600 19px var(--display);margin:0}
+.sect span{font-size:13px;color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cat{display:grid;justify-items:center;gap:6px;padding:14px 6px 12px;border-radius:18px;border:1px solid var(--edge);background:var(--glass);color:var(--ink);cursor:pointer;font:inherit}
+.cat .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--edge)}
+.cat .ic svg{width:24px;height:24px;color:var(--sage)}
+.cat b{font:600 17px var(--display)}
+.cat small{font-size:12px;color:var(--muted)}
+.cat[aria-pressed="true"]{background:linear-gradient(180deg,rgba(207,224,182,.22),rgba(168,196,140,.12));border-color:rgba(207,224,182,.55)}
+.cat[aria-pressed="true"] .ic{background:var(--sage);border-color:transparent}
+.cat[aria-pressed="true"] .ic svg{color:var(--sage-ink)}
+.budget{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.budget .lbl{font-size:12px;color:var(--muted);margin-right:2px}
+.chip{border:1px solid var(--edge);background:var(--glass);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--sage);color:var(--sage-ink);border-color:transparent}
+.chip:disabled{color:var(--muted);cursor:not-allowed}
+.chip:disabled small{font-weight:500;opacity:.8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);padding:4px 0}
+.stat{padding:12px 8px;text-align:center;display:grid;gap:2px}
+.stat+.stat{border-left:1px solid var(--edge)}
+.stat svg{width:22px;height:22px;color:var(--sage);justify-self:center;margin-bottom:4px}
+.stat .k{font-size:12px;color:var(--muted)}
+.stat .v{font-weight:700;font-variant-numeric:tabular-nums}
+.days{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.days button{flex:0 0 auto;width:52px;padding:8px 0;border-radius:16px;border:1px solid var(--edge);background:var(--glass);color:var(--ink);cursor:pointer;display:grid;gap:2px;font:600 14px var(--body)}
+.days button span{font:500 11px var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
+.days button[aria-pressed="true"]{background:var(--sage);color:var(--sage-ink);border-color:transparent}
+.days button[aria-pressed="true"] span{color:var(--sage-ink);opacity:.75}
+.dayhead{padding:16px 18px}
+.dayhead .row1{display:flex;justify-content:space-between;align-items:baseline}
+.dayhead h3{font:600 22px var(--display);margin:0}
+.dayhead .kc{font:700 20px var(--body);color:var(--sage);font-variant-numeric:tabular-nums}
+.dayhead .kc small{font-size:12px;color:var(--muted);font-weight:500}
+.quad{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;border-top:1px solid var(--edge);padding-top:12px}
+.quad div{text-align:center;display:grid;gap:2px}
+.quad div+div{border-left:1px solid var(--edge)}
+.quad .k{font-size:12px;color:var(--muted)}
+.quad .v{font-weight:700;font-variant-numeric:tabular-nums}
+.quad i{display:block;height:4px;border-radius:2px;margin:6px auto 0;width:60%;background:rgba(255,255,255,.1);overflow:hidden}
+.quad i b{display:block;height:100%;background:var(--sage-2)}
+.meal{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:14px;align-items:start}
+.meal .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--edge)}
+.meal .ic svg{width:26px;height:26px;color:var(--sage)}
+.meal .slot{font-size:12px;color:var(--sage-2);font-weight:600;display:flex;justify-content:space-between}
+.meal .slot b{color:var(--ink);font-variant-numeric:tabular-nums}
+.meal .nm{font:600 16px/1.3 var(--display);margin:2px 0 4px}
+.meal .it{font-size:13px;color:var(--muted)}
+.meal .mm{font-size:12px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:13px 14px;cursor:pointer}
+.item input{position:absolute;opacity:0;pointer-events:none}
+.check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--edge);display:grid;place-items:center;background:rgba(255,255,255,.04)}
+.check svg{width:14px;height:14px;opacity:0;color:var(--sage-ink)}
+.item.done .check{background:var(--sage);border-color:transparent}
+.item.done .check svg{opacity:1}
+.item .n{font-weight:600}
+.item.done .n{color:var(--muted);text-decoration:line-through}
+.item .q{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.item .pr{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.est{font-size:10px;font-weight:700;color:var(--warn);border:1px solid currentColor;border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:2px;text-decoration:none;display:inline-block}
+.grp{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:8px 4px 0}
+.sum{padding:16px 18px;display:grid;gap:8px;font-variant-numeric:tabular-nums}
+.sum div{display:flex;justify-content:space-between;color:var(--muted)}
+.sum .tot{border-top:1px solid var(--edge);padding-top:10px;color:var(--ink);font-weight:700;font-size:17px}
+.sum .tot span:last-child{color:var(--sage);font-size:20px}
+.prog{height:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--sage);width:0;transition:width .25s}
+.secure{display:flex;justify-content:center;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.secure svg{width:13px;height:13px}
+.step{padding:16px 18px}
+.step h3{font:600 20px var(--display);margin:0}
+.step .when{font-size:13px;color:var(--sage-2);margin:2px 0 12px}
+.step ol{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:s}
+.step li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.step li::before{content:counter(s);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid var(--edge);font-weight:700;font-size:13px}
+.step li em{display:block;font-style:normal;color:var(--muted);font-size:13px}
+.note{font-size:12.5px;color:var(--muted);padding:0 4px;margin:0}
+nav.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));width:min(428px,calc(100% - 32px));z-index:5;display:grid;grid-template-columns:repeat(3,1fr);padding:8px;border-radius:26px;background:rgba(30,46,38,.72)}
+nav.bottom button{border:0;background:none;color:var(--muted);display:grid;justify-items:center;gap:3px;padding:6px 0;border-radius:18px;font:600 12px var(--body);cursor:pointer}
+nav.bottom button .bub{width:44px;height:32px;border-radius:16px;display:grid;place-items:center}
+nav.bottom button svg{width:22px;height:22px}
+nav.bottom button[aria-selected="true"]{color:var(--ink)}
+nav.bottom button[aria-selected="true"] .bub{background:var(--sage);color:var(--sage-ink)}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--sage);color:var(--sage-ink);padding:9px 16px;border-radius:999px;font-weight:700;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:6}
 .toast.on{opacity:1}
-footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
-@media (max-width:680px){
-  .tiles{grid-template-columns:repeat(2,1fr)}
-  .prep{grid-template-columns:1fr}
-  .meal{grid-template-columns:1fr auto}
-  .meal .slot{grid-column:1/-1}
-  .meal .it{grid-column:1/-1}
-}
+[hidden]{display:none!important}
+.app{max-width:980px;padding:calc(20px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));gap:18px}
+header{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:end;justify-content:space-between}
+header .sub{font-size:14px;color:var(--muted);margin-top:6px}
+.brand{font-size:26px}
+.controls{display:flex;flex-wrap:wrap;gap:10px}
+.seg{display:inline-flex;align-items:center;gap:2px;padding:4px;border-radius:999px}
+.seg .lbl{font-size:12px;color:var(--muted);padding:0 8px 0 10px}
+.seg button{border:0;background:none;color:var(--ink);font:600 14px var(--body);padding:8px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:linear-gradient(180deg,var(--sage),var(--sage-2));color:var(--sage-ink)}
+.seg button:disabled{color:var(--muted);cursor:not-allowed}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tile{padding:14px 16px;display:grid;gap:2px}
+.tile .h{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.tile .h svg{width:18px;height:18px;color:var(--sage)}
+.tile .v{font:700 23px/1.2 var(--body);letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:6px}
+.tile .s{font-size:12.5px;color:var(--muted)}
+.tabs{display:inline-flex;gap:4px;padding:5px;border-radius:999px;justify-self:start}
+.tabs button{border:0;background:none;color:var(--muted);font:600 15px var(--body);padding:9px 18px;border-radius:999px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.tabs button svg{width:18px;height:18px}
+.tabs button[aria-selected="true"]{background:linear-gradient(180deg,var(--sage),var(--sage-2));color:var(--sage-ink)}
+.menu-grid{display:grid;gap:12px}
+.meals2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shopbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.shopbar .progress{flex:1;min-width:220px;display:grid;gap:6px}
+.shopbar .progress .t{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pill.ghost{padding:10px 16px}
+.groups{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;align-items:start}
+.groups .col{display:grid;gap:8px}
+.prep{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--edge);padding-top:12px}
+@media (max-width:760px){.tile .v{font-size:19px}.tiles{grid-template-columns:repeat(2,1fr)}.meals2,.groups,.prep{grid-template-columns:1fr}.tabs{justify-self:stretch;display:grid;grid-template-columns:repeat(3,1fr)}.tabs button{justify-content:center;padding:9px 6px}}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="scene" aria-hidden="true">
+  <svg style="right:-80px;top:40px;width:340px;height:340px" viewBox="0 0 100 100"><path d="M50 95C20 70 15 35 50 5c35 30 30 65 0 90z" fill="#4f7a4d"/></svg>
+  <svg style="left:-120px;top:380px;width:360px;height:360px;transform:rotate(-35deg)" viewBox="0 0 100 100"><path d="M50 95C20 70 15 35 50 5c35 30 30 65 0 90z" fill="#3e6440"/></svg>
+  <svg style="right:-60px;bottom:-80px;width:300px;height:300px;transform:rotate(30deg)" viewBox="0 0 100 100"><path d="M50 95C20 70 15 35 50 5c35 30 30 65 0 90z" fill="#456d44"/></svg>
+</div>
+
+<main class="app">
   <header>
-    <h1>Smart Meal Plan<small>Тиждень 1 · один закуп в АТБ · готування в неділю та середу</small></h1>
+    <div><div class="brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M16 27C9 22 8 13 16 5c8 8 7 17 0 22z"/><path d="M16 27V12"/><path d="M16 27c-5 0-10-3-11-9 5-1 9 1 11 5M16 27c5 0 10-3 11-9-5-1-9 1-11 5"/></svg>Smart Meal Plan</div><div class="sub">Тиждень 1 · один закуп в АТБ · готування в неділю та середу</div></div>
     <div class="controls">
-      <div class="seg" role="group" aria-label="Калораж"><span class="lbl">Калораж</span>
-        <button id="k1300" data-k="1300">1300</button><button id="k1500" data-k="1500">1500</button><button id="k1700" data-k="1700">1700</button>
-      </div>
-      <div class="seg" role="group" aria-label="Бюджет"><span class="lbl">Бюджет</span>
-        <button id="b-eco" aria-pressed="true">Економ</button><button id="b-base" disabled title="Скоро">Базовий</button><button id="b-prem" disabled title="Скоро">Преміум</button>
-      </div>
+      <div class="seg glass" role="group" aria-label="Калораж"><span class="lbl">Калораж</span><button data-k="1300" id="k1300">1300</button><button data-k="1500" id="k1500">1500</button><button data-k="1700" id="k1700">1700</button></div>
+      <div class="seg glass" role="group" aria-label="Бюджет"><span class="lbl">Бюджет</span><button aria-pressed="true">Економ</button><button disabled title="Скоро">Базовий</button><button disabled title="Скоро">Преміум</button></div>
     </div>
   </header>
 
   <section class="tiles" aria-label="Підсумок тижня">
-    <div class="tile"><div class="k">Середньо за день</div><div class="v" id="t-kcal"></div><div class="s">ккал</div></div>
-    <div class="tile"><div class="k">Білки · жири · вуглеводи</div><div class="v" id="t-macro"></div><div class="s">г на день</div></div>
-    <div class="tile"><div class="k">Чек у АТБ</div><div class="v" id="t-check"></div><div class="s" id="t-used"></div></div>
-    <div class="tile"><div class="k">Готування</div><div class="v">2 дні</div><div class="s">~2 год + ~1,5 год</div></div>
+    <div class="glass tile"><div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-2 1-4 3-6 0 2 1 3 2 3 0-3 0-5 1-8z"/></svg>Середньо за день</div><div class="v" id="t-kcal"></div><div class="s">ккал</div></div>
+    <div class="glass tile"><div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Білки · жири · вуглеводи</div><div class="v" id="t-macro"></div><div class="s">г на день</div></div>
+    <div class="glass tile"><div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Чек у АТБ</div><div class="v" id="t-check"></div><div class="s" id="t-used"></div></div>
+    <div class="glass tile"><div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M2 11h20M9 7c0-1.5 1-1.5 1-3M14 7c0-1.5 1-1.5 1-3"/></svg>Готування</div><div class="v">2 дні</div><div class="s">~2 год + ~1,5 год</div></div>
   </section>
 
-  <nav class="tabs" role="tablist">
-    <button role="tab" id="tab-menu" aria-selected="true" data-p="menu">Меню</button>
-    <button role="tab" id="tab-shop" aria-selected="false" data-p="shop">Покупки</button>
-    <button role="tab" id="tab-prep" aria-selected="false" data-p="prep">Готування</button>
+  <nav class="tabs glass" role="tablist" aria-label="Розділи">
+    <button role="tab" id="tab-menu" aria-selected="true" data-p="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4"/></svg>Меню</button>
+    <button role="tab" id="tab-shop" aria-selected="false" data-p="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Покупки</button>
+    <button role="tab" id="tab-prep" aria-selected="false" data-p="prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M2 11h20M9 7c0-1.5 1-1.5 1-3M14 7c0-1.5 1-1.5 1-3"/></svg>Готування</button>
   </nav>
 
-  <section id="p-menu">
+  <section id="p-menu" class="menu-grid">
     <div class="days" id="days"></div>
-    <div class="dayhead"><h2 id="dname"></h2>
-      <div><div class="macro" id="mbar"></div><div class="legend" id="mleg"></div></div></div>
-    <div class="meals" id="meals"></div>
+    <div class="glass dayhead"><div class="row1"><h3 id="dname"></h3><div class="kc" id="dkcal"></div></div><div class="quad" id="quad"></div></div>
+    <div class="meals2" id="meals"></div>
     <p class="note">Ваги — для сирих продуктів і сухих круп.</p>
   </section>
 
-  <section id="p-shop" hidden>
+  <section id="p-shop" class="menu-grid" hidden>
     <div class="shopbar">
-      <div class="progress"><div class="t" id="prog-t"></div><div class="b"><i id="prog-b"></i></div></div>
-      <button class="btn" id="copy-list">Скопіювати список</button>
-      <button class="btn primary" id="copy-silpo">Запит для кошика Сільпо</button>
+      <div class="progress"><span class="t" id="prog-t"></span><div class="prog"><i id="prog-b"></i></div></div>
+      <button class="pill ghost" id="copy-list">Скопіювати список</button>
+      <button class="pill" id="copy-silpo">Запит для кошика Сільпо <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
-    <div id="groups"></div>
-    <div class="total"><span>Разом у чеку</span><span id="sum"></span></div>
-    <p class="note"><span class="pill">оцінка</span> — ціну ще треба звірити в магазині. Решта цін — АТБ, жовтень–листопад 2026. Запит для Сільпо працює, якщо до вашого Claude або ChatGPT підключено MCP-сервер Сільпо: вставте скопійований текст у чат.</p>
+    <div class="groups" id="groups"></div>
+    <div class="glass sum">
+      <div><span>Позицій</span><span id="s-n"></span></div>
+      <div><span>З'їдено за тиждень</span><span id="s-used"></span></div>
+      <div><span>Залишиться в запас</span><span id="s-stock"></span></div>
+      <div class="tot"><span>Разом у чеку</span><span id="s-tot"></span></div>
+    </div>
+    <p class="note"><span class="est">оцінка</span> — ціну ще треба звірити в магазині. Решта цін — АТБ, жовтень–листопад 2026. Запит для Сільпо вставте в Claude або ChatGPT із підключеним MCP-сервером Сільпо.</p>
   </section>
 
-  <section id="p-prep" hidden>
+  <section id="p-prep" class="menu-grid" hidden>
     <div class="prep">
-      <div class="card"><h3>Неділя</h3><div class="when">на понеділок–середу · ~2 год</div><ol id="prep-sun"></ol></div>
-      <div class="card"><h3>Середа</h3><div class="when">на четвер–суботу · ~1,5 год</div><ol id="prep-wed"></ol></div>
+      <div class="glass step"><h3>Неділя</h3><div class="when">на понеділок–середу · ~2 год</div><ol id="prep-sun"></ol></div>
+      <div class="glass step"><h3>Середа</h3><div class="when">на четвер–суботу · ~1,5 год</div><ol id="prep-wed"></ol></div>
     </div>
-    <p class="note">Готові страви — до 3 днів у холодильнику при +4 °C. Філе для тефтелей одразу в морозилку, у вівторок увечері переклади його і хек у холодильник.</p>
+    <p class="note">Готові страви — до 3 днів у холодильнику при +4 °C. Філе для тефтелей одразу в морозилку; у вівторок увечері переклади його й хек у холодильник.</p>
   </section>
 
   <footer>Прототип. Загальний план харчування, не медична дієта: не для вагітних, дітей, людей із хронічними хворобами чи розладами харчової поведінки. КБЖВ — за середніми табличними даними.</footer>
-</div>
+</main>
 <div class="toast" id="toast" role="status"></div>
+
 <script>
 const DATA = {"1300": {"days": [{"day": "Понеділок", "kcal": 1303, "p": 82, "f": 40, "c": 147, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з бананом", "items": "вівсянка 55 г, молоко 150 мл, банани 80 г", "kcal": 347, "p": 12, "f": 7, "c": 57}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, салат з капусти й моркви", "items": "філе 140 г, гречка 65 г, капуста 100 г, морква 40 г, олія 6 г", "kcal": 468, "p": 44, "f": 11, "c": 48}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 165 г", "kcal": 178, "p": 8, "f": 3, "c": 26}, {"slot": "Вечеря", "name": "Тушкована капуста з морквою, 2 варені яйця", "items": "капуста 200 г, морква 50 г, цибуля 30 г, олія 6 г, яйця 2 шт", "kcal": 310, "p": 19, "f": 19, "c": 16}]}, {"day": "Вівторок", "kcal": 1291, "p": 106, "f": 43, "c": 116, "meals": [{"slot": "Сніданок", "name": "Сирна запіканка з яблуком", "items": "сир 5% 175 г, яйце ½ шт, вівсянка 15 г, яблука 75 г", "kcal": 342, "p": 36, "f": 13, "c": 20}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, тушкована капуста", "items": "філе 140 г, гречка 60 г, капуста 150 г, морква 40 г, цибуля 20 г, олія 5 г", "kcal": 464, "p": 44, "f": 10, "c": 49}, {"slot": "Перекус", "name": "Салат з капусти й моркви, хліб", "items": "капуста 120 г, морква 40 г, олія 5 г, хліб 40 г", "kcal": 177, "p": 5, "f": 6, "c": 25}, {"slot": "Вечеря", "name": "Омлет із цвітною капустою, хліб", "items": "яйця 2 шт, молоко 50 мл, капуста цвітна 150 г, хліб 30 г", "kcal": 308, "p": 21, "f": 15, "c": 22}]}, {"day": "Середа", "kcal": 1306, "p": 96, "f": 30, "c": 159, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з яблуком", "items": "вівсянка 55 г, молоко 150 мл, яблука 130 г", "kcal": 332, "p": 11, "f": 8, "c": 53}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, салат з капусти й моркви", "items": "філе 140 г, гречка 65 г, капуста 100 г, морква 40 г, олія 5 г", "kcal": 459, "p": 44, "f": 10, "c": 48}, {"slot": "Перекус", "name": "Кефір і банан", "items": "кефір 250 мл, банани 75 г", "kcal": 172, "p": 9, "f": 3, "c": 26}, {"slot": "Вечеря", "name": "Хек, запечений з морквою й цибулею, варена картопля", "items": "хек 170 г, морква 50 г, цибуля 30 г, олія 5 г, картопля 160 г", "kcal": 344, "p": 32, "f": 9, "c": 32}]}, {"day": "Четвер", "kcal": 1311, "p": 118, "f": 34, "c": 127, "meals": [{"slot": "Сніданок", "name": "Сирна запіканка з яблуком", "items": "сир 5% 175 г, яйце ½ шт, вівсянка 15 г, яблука 70 г", "kcal": 340, "p": 36, "f": 13, "c": 19}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат із запеченого буряка", "items": "філе 140 г, цибуля 20 г, рис 60 г, буряк 120 г, олія 5 г", "kcal": 468, "p": 39, "f": 8, "c": 57}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 145 г", "kcal": 168, "p": 8, "f": 3, "c": 24}, {"slot": "Вечеря", "name": "Хек, овочеве рагу", "items": "хек 170 г, картопля 95 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 5 г", "kcal": 335, "p": 35, "f": 10, "c": 27}]}, {"day": "П’ятниця", "kcal": 1298, "p": 110, "f": 38, "c": 125, "meals": [{"slot": "Сніданок", "name": "Омлет, хліб, яблуко", "items": "яйця 2 шт, молоко 50 мл, хліб 40 г, яблука 95 г", "kcal": 329, "p": 18, "f": 15, "c": 29}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат із запеченого буряка", "items": "філе 140 г, цибуля 20 г, рис 55 г, буряк 120 г, олія 5 г", "kcal": 451, "p": 39, "f": 8, "c": 53}, {"slot": "Перекус", "name": "Кисломолочний сир із бананом", "items": "сир 5% 100 г, банани 65 г", "kcal": 183, "p": 18, "f": 5, "c": 15}, {"slot": "Вечеря", "name": "Хек, овочеве рагу", "items": "хек 170 г, картопля 95 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 5 г", "kcal": 335, "p": 35, "f": 10, "c": 27}]}, {"day": "Субота", "kcal": 1312, "p": 80, "f": 37, "c": 158, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з бананом", "items": "вівсянка 50 г, молоко 150 мл, банани 70 г", "kcal": 320, "p": 11, "f": 7, "c": 52}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат з капусти й моркви", "items": "філе 140 г, цибуля 20 г, рис 60 г, капуста 100 г, морква 40 г, олія 5 г", "kcal": 459, "p": 40, "f": 8, "c": 54}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 145 г", "kcal": 168, "p": 8, "f": 3, "c": 24}, {"slot": "Вечеря", "name": "Омлет, овочеве рагу", "items": "яйця 2 шт, картопля 100 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 5 г", "kcal": 365, "p": 21, "f": 19, "c": 28}]}, {"day": "Неділя", "kcal": 1288, "p": 99, "f": 41, "c": 127, "meals": [{"slot": "Сніданок", "name": "Кисломолочний сир з яблуком і вівсянкою", "items": "сир 5% 150 г, яблука 130 г, вівсянка 25 г", "kcal": 330, "p": 29, "f": 10, "c": 30}, {"slot": "Обід", "name": "Запечене куряче філе, запечена картопля, салат з капусти й моркви", "items": "філе 140 г, картопля 175 г, капуста 100 г, морква 40 г, олія 7 г", "kcal": 397, "p": 39, "f": 10, "c": 37}, {"slot": "Перекус", "name": "Кефір, хліб", "items": "кефір 250 мл, хліб 25 г", "kcal": 154, "p": 9, "f": 3, "c": 20}, {"slot": "Вечеря", "name": "Гречка, 2 варені яйця, салат з буряка", "items": "гречка 45 г, яйця 2 шт, буряк 120 г, олія 4 г", "kcal": 408, "p": 21, "f": 18, "c": 39}]}], "shop": [{"key": "oats", "name": "Вівсяні пластівці", "buy": "1 пачка", "cost": 55, "est": true, "group": "Крупи, хліб, олія"}, {"key": "milk", "name": "Молоко 2,5%", "buy": "1 пачка ~900 мл", "cost": 68.5, "est": true, "group": "Молочне"}, {"key": "banana", "name": "Банани", "buy": "350 г", "cost": 25.38, "est": false, "group": "Овочі, фрукти"}, {"key": "fillet", "name": "Куряче філе", "buy": "1000 г", "cost": 264.89, "est": false, "group": "М’ясо, риба, яйця"}, {"key": "buckwheat", "name": "Гречка (ядриця)", "buy": "1 пачка 1 кг", "cost": 81.3, "est": false, "group": "Крупи, хліб, олія"}, {"key": "cabbage", "name": "Капуста білокачанна", "buy": "1000 г", "cost": 15.89, "est": false, "group": "Овочі, фрукти"}, {"key": "carrot", "name": "Морква", "buy": "550 г", "cost": 8.17, "est": false, "group": "Овочі, фрукти"}, {"key": "oil", "name": "Олія соняшникова", "buy": "1 пляшка 0,85 л", "cost": 87.8, "est": false, "group": "Крупи, хліб, олія"}, {"key": "kefir", "name": "Кефір 1%", "buy": "2 пляшки по 870 г", "cost": 143.4, "est": false, "group": "Молочне"}, {"key": "apple", "name": "Яблука", "buy": "1100 г", "cost": 29.48, "est": false, "group": "Овочі, фрукти"}, {"key": "onion", "name": "Цибуля ріпчаста", "buy": "250 г", "cost": 3.71, "est": false, "group": "Овочі, фрукти"}, {"key": "egg", "name": "Яйця С1", "buy": "11 шт", "cost": 44.22, "est": false, "group": "М’ясо, риба, яйця"}, {"key": "tvorog", "name": "Сир кисломолочний 5%", "buy": "2 пачки по 350 г", "cost": 173.0, "est": false, "group": "Молочне"}, {"key": "bread", "name": "Хліб житньо-пшеничний", "buy": "1 буханка", "cost": 38, "est": true, "group": "Крупи, хліб, олія"}, {"key": "cauli", "name": "Капуста цвітна", "buy": "700 г", "cost": 22.32, "est": false, "group": "Овочі, фрукти"}, {"key": "hake", "name": "Хек (філе, заморожений)", "buy": "550 г", "cost": 104.5, "est": true, "group": "М’ясо, риба, яйця"}, {"key": "potato", "name": "Картопля", "buy": "700 г", "cost": 13.93, "est": false, "group": "Овочі, фрукти"}, {"key": "rice", "name": "Рис круглозернистий", "buy": "1 пачка 1 кг", "cost": 54.9, "est": false, "group": "Крупи, хліб, олія"}, {"key": "beet", "name": "Буряк", "buy": "400 г", "cost": 5.56, "est": false, "group": "Овочі, фрукти"}], "checkout": 1240, "used": 860}, "1500": {"days": [{"day": "Понеділок", "kcal": 1493, "p": 90, "f": 44, "c": 178, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з бананом", "items": "вівсянка 70 г, молоко 150 мл, банани 100 г", "kcal": 419, "p": 14, "f": 8, "c": 70}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, салат з капусти й моркви", "items": "філе 150 г, гречка 85 г, капуста 100 г, морква 40 г, олія 7 г", "kcal": 554, "p": 48, "f": 13, "c": 61}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 215 г", "kcal": 201, "p": 8, "f": 3, "c": 31}, {"slot": "Вечеря", "name": "Тушкована капуста з морквою, 2 варені яйця", "items": "капуста 200 г, морква 50 г, цибуля 30 г, олія 7 г, яйця 2 шт", "kcal": 319, "p": 19, "f": 20, "c": 16}]}, {"day": "Вівторок", "kcal": 1499, "p": 115, "f": 49, "c": 145, "meals": [{"slot": "Сніданок", "name": "Сирна запіканка з яблуком", "items": "сир 5% 185 г, яйце ½ шт, вівсянка 20 г, яблука 100 г", "kcal": 383, "p": 38, "f": 14, "c": 25}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, тушкована капуста", "items": "філе 150 г, гречка 80 г, капуста 150 г, морква 40 г, цибуля 20 г, олія 7 г", "kcal": 559, "p": 49, "f": 13, "c": 62}, {"slot": "Перекус", "name": "Салат з капусти й моркви, хліб", "items": "капуста 120 г, морква 40 г, олія 7 г, хліб 55 г", "kcal": 227, "p": 6, "f": 8, "c": 32}, {"slot": "Вечеря", "name": "Омлет із цвітною капустою, хліб", "items": "яйця 2 шт, молоко 50 мл, капуста цвітна 150 г, хліб 40 г", "kcal": 329, "p": 22, "f": 15, "c": 26}]}, {"day": "Середа", "kcal": 1506, "p": 104, "f": 35, "c": 187, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з яблуком", "items": "вівсянка 65 г, молоко 150 мл, яблука 160 г", "kcal": 381, "p": 13, "f": 8, "c": 62}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, салат з капусти й моркви", "items": "філе 150 г, гречка 80 г, капуста 100 г, морква 40 г, олія 7 г", "kcal": 537, "p": 48, "f": 13, "c": 58}, {"slot": "Перекус", "name": "Кефір і банан", "items": "кефір 250 мл, банани 90 г", "kcal": 186, "p": 9, "f": 3, "c": 29}, {"slot": "Вечеря", "name": "Хек, запечений з морквою й цибулею, варена картопля", "items": "хек 180 г, морква 50 г, цибуля 30 г, олія 7 г, картопля 200 г", "kcal": 402, "p": 35, "f": 12, "c": 39}]}, {"day": "Четвер", "kcal": 1490, "p": 126, "f": 38, "c": 154, "meals": [{"slot": "Сніданок", "name": "Сирна запіканка з яблуком", "items": "сир 5% 185 г, яйце ½ шт, вівсянка 20 г, яблука 95 г", "kcal": 381, "p": 38, "f": 14, "c": 25}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат із запеченого буряка", "items": "філе 150 г, цибуля 20 г, рис 75 г, буряк 120 г, олія 6 г", "kcal": 540, "p": 43, "f": 10, "c": 68}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 190 г", "kcal": 189, "p": 8, "f": 3, "c": 29}, {"slot": "Вечеря", "name": "Хек, овочеве рагу", "items": "хек 180 г, картопля 130 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 6 г", "kcal": 380, "p": 37, "f": 11, "c": 33}]}, {"day": "П’ятниця", "kcal": 1494, "p": 118, "f": 41, "c": 157, "meals": [{"slot": "Сніданок", "name": "Омлет, хліб, яблуко", "items": "яйця 2 шт, молоко 50 мл, хліб 50 г, яблука 125 г", "kcal": 364, "p": 19, "f": 15, "c": 36}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат із запеченого буряка", "items": "філе 150 г, цибуля 20 г, рис 75 г, буряк 120 г, олія 6 г", "kcal": 540, "p": 43, "f": 10, "c": 68}, {"slot": "Перекус", "name": "Кисломолочний сир із бананом", "items": "сир 5% 105 г, банани 90 г", "kcal": 213, "p": 19, "f": 5, "c": 21}, {"slot": "Вечеря", "name": "Хек, овочеве рагу", "items": "хек 180 г, картопля 125 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 6 г", "kcal": 376, "p": 37, "f": 11, "c": 32}]}, {"day": "Субота", "kcal": 1505, "p": 86, "f": 40, "c": 191, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з бананом", "items": "вівсянка 65 г, молоко 150 мл, банани 90 г", "kcal": 392, "p": 13, "f": 8, "c": 65}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат з капусти й моркви", "items": "філе 150 г, цибуля 20 г, рис 75 г, капуста 100 г, морква 40 г, олія 6 г", "kcal": 531, "p": 43, "f": 10, "c": 65}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 190 г", "kcal": 189, "p": 8, "f": 3, "c": 29}, {"slot": "Вечеря", "name": "Омлет, овочеве рагу", "items": "яйця 2 шт, картопля 125 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 6 г", "kcal": 394, "p": 21, "f": 20, "c": 33}]}, {"day": "Неділя", "kcal": 1498, "p": 107, "f": 47, "c": 156, "meals": [{"slot": "Сніданок", "name": "Кисломолочний сир з яблуком і вівсянкою", "items": "сир 5% 160 г, яблука 170 г, вівсянка 35 г", "kcal": 396, "p": 32, "f": 11, "c": 41}, {"slot": "Обід", "name": "Запечене куряче філе, запечена картопля, салат з капусти й моркви", "items": "філе 150 г, картопля 230 г, капуста 100 г, морква 40 г, олія 9 г", "kcal": 469, "p": 42, "f": 13, "c": 46}, {"slot": "Перекус", "name": "Кефір, хліб", "items": "кефір 250 мл, хліб 35 г", "kcal": 175, "p": 10, "f": 3, "c": 25}, {"slot": "Вечеря", "name": "Гречка, 2 варені яйця, салат з буряка", "items": "гречка 55 г, яйця 2 шт, буряк 120 г, олія 6 г", "kcal": 459, "p": 23, "f": 21, "c": 45}]}], "shop": [{"key": "oats", "name": "Вівсяні пластівці", "buy": "1 пачка", "cost": 55, "est": true, "group": "Крупи, хліб, олія"}, {"key": "milk", "name": "Молоко 2,5%", "buy": "1 пачка ~900 мл", "cost": 68.5, "est": true, "group": "Молочне"}, {"key": "banana", "name": "Банани", "buy": "450 г", "cost": 32.62, "est": false, "group": "Овочі, фрукти"}, {"key": "fillet", "name": "Куряче філе", "buy": "1050 г", "cost": 278.13, "est": false, "group": "М’ясо, риба, яйця"}, {"key": "buckwheat", "name": "Гречка (ядриця)", "buy": "1 пачка 1 кг", "cost": 81.3, "est": false, "group": "Крупи, хліб, олія"}, {"key": "cabbage", "name": "Капуста білокачанна", "buy": "1000 г", "cost": 15.89, "est": false, "group": "Овочі, фрукти"}, {"key": "carrot", "name": "Морква", "buy": "550 г", "cost": 8.17, "est": false, "group": "Овочі, фрукти"}, {"key": "oil", "name": "Олія соняшникова", "buy": "1 пляшка 0,85 л", "cost": 87.8, "est": false, "group": "Крупи, хліб, олія"}, {"key": "kefir", "name": "Кефір 1%", "buy": "2 пляшки по 870 г", "cost": 143.4, "est": false, "group": "Молочне"}, {"key": "apple", "name": "Яблука", "buy": "1400 г", "cost": 37.52, "est": false, "group": "Овочі, фрукти"}, {"key": "onion", "name": "Цибуля ріпчаста", "buy": "250 г", "cost": 3.71, "est": false, "group": "Овочі, фрукти"}, {"key": "egg", "name": "Яйця С1", "buy": "11 шт", "cost": 44.22, "est": false, "group": "М’ясо, риба, яйця"}, {"key": "tvorog", "name": "Сир кисломолочний 5%", "buy": "2 пачки по 350 г", "cost": 173.0, "est": false, "group": "Молочне"}, {"key": "bread", "name": "Хліб житньо-пшеничний", "buy": "1 буханка", "cost": 38, "est": true, "group": "Крупи, хліб, олія"}, {"key": "cauli", "name": "Капуста цвітна", "buy": "700 г", "cost": 22.32, "est": false, "group": "Овочі, фрукти"}, {"key": "hake", "name": "Хек (філе, заморожений)", "buy": "550 г", "cost": 104.5, "est": true, "group": "М’ясо, риба, яйця"}, {"key": "potato", "name": "Картопля", "buy": "900 г", "cost": 17.91, "est": false, "group": "Овочі, фрукти"}, {"key": "rice", "name": "Рис круглозернистий", "buy": "1 пачка 1 кг", "cost": 54.9, "est": false, "group": "Крупи, хліб, олія"}, {"key": "beet", "name": "Буряк", "buy": "400 г", "cost": 5.56, "est": false, "group": "Овочі, фрукти"}], "checkout": 1272, "used": 927}, "1700": {"days": [{"day": "Понеділок", "kcal": 1700, "p": 97, "f": 50, "c": 208, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з бананом", "items": "вівсянка 85 г, молоко 150 мл, банани 120 г", "kcal": 491, "p": 16, "f": 9, "c": 83}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, салат з капусти й моркви", "items": "філе 160 г, гречка 105 г, капуста 100 г, морква 40 г, олія 9 г", "kcal": 649, "p": 53, "f": 16, "c": 73}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 260 г", "kcal": 222, "p": 9, "f": 4, "c": 35}, {"slot": "Вечеря", "name": "Тушкована капуста з морквою, 2 варені яйця", "items": "капуста 200 г, морква 50 г, цибуля 30 г, олія 9 г, яйця 2 шт", "kcal": 337, "p": 19, "f": 22, "c": 16}]}, {"day": "Вівторок", "kcal": 1684, "p": 125, "f": 53, "c": 171, "meals": [{"slot": "Сніданок", "name": "Сирна запіканка з яблуком", "items": "сир 5% 200 г, яйце ½ шт, вівсянка 25 г, яблука 125 г", "kcal": 431, "p": 41, "f": 15, "c": 31}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, тушкована капуста", "items": "філе 160 г, гречка 100 г, капуста 150 г, морква 40 г, цибуля 20 г, олія 8 г", "kcal": 645, "p": 54, "f": 15, "c": 74}, {"slot": "Перекус", "name": "Салат з капусти й моркви, хліб", "items": "капуста 120 г, морква 40 г, олія 8 г, хліб 65 г", "kcal": 257, "p": 7, "f": 9, "c": 36}, {"slot": "Вечеря", "name": "Омлет із цвітною капустою, хліб", "items": "яйця 2 шт, молоко 50 мл, капуста цвітна 150 г, хліб 50 г", "kcal": 351, "p": 22, "f": 15, "c": 30}]}, {"day": "Середа", "kcal": 1710, "p": 114, "f": 40, "c": 218, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з яблуком", "items": "вівсянка 80 г, молоко 150 мл, яблука 190 г", "kcal": 447, "p": 15, "f": 9, "c": 74}, {"slot": "Обід", "name": "Запечене куряче філе, гречка, салат з капусти й моркви", "items": "філе 160 г, гречка 95 г, капуста 100 г, морква 40 г, олія 8 г", "kcal": 607, "p": 52, "f": 14, "c": 67}, {"slot": "Перекус", "name": "Кефір і банан", "items": "кефір 250 мл, банани 110 г", "kcal": 206, "p": 9, "f": 3, "c": 33}, {"slot": "Вечеря", "name": "Хек, запечений з морквою й цибулею, варена картопля", "items": "хек 195 г, морква 50 г, цибуля 30 г, олія 8 г, картопля 235 г", "kcal": 450, "p": 38, "f": 13, "c": 44}]}, {"day": "Четвер", "kcal": 1710, "p": 136, "f": 44, "c": 184, "meals": [{"slot": "Сніданок", "name": "Сирна запіканка з яблуком", "items": "сир 5% 200 г, яйце ½ шт, вівсянка 25 г, яблука 120 г", "kcal": 428, "p": 41, "f": 15, "c": 31}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат із запеченого буряка", "items": "філе 160 г, цибуля 20 г, рис 95 г, буряк 120 г, олія 8 г", "kcal": 638, "p": 46, "f": 12, "c": 83}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 235 г", "kcal": 210, "p": 8, "f": 3, "c": 33}, {"slot": "Вечеря", "name": "Хек, овочеве рагу", "items": "хек 195 г, картопля 160 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 8 г", "kcal": 434, "p": 40, "f": 13, "c": 37}]}, {"day": "П’ятниця", "kcal": 1712, "p": 128, "f": 47, "c": 188, "meals": [{"slot": "Сніданок", "name": "Омлет, хліб, яблуко", "items": "яйця 2 шт, молоко 50 мл, хліб 60 г, яблука 155 г", "kcal": 400, "p": 20, "f": 15, "c": 44}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат із запеченого буряка", "items": "філе 160 г, цибуля 20 г, рис 95 г, буряк 120 г, олія 8 г", "kcal": 638, "p": 46, "f": 12, "c": 83}, {"slot": "Перекус", "name": "Кисломолочний сир із бананом", "items": "сир 5% 115 г, банани 110 г", "kcal": 245, "p": 21, "f": 6, "c": 25}, {"slot": "Вечеря", "name": "Хек, овочеве рагу", "items": "хек 195 г, картопля 155 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 8 г", "kcal": 430, "p": 40, "f": 13, "c": 37}]}, {"day": "Субота", "kcal": 1696, "p": 92, "f": 46, "c": 220, "meals": [{"slot": "Сніданок", "name": "Вівсянка на молоці з бананом", "items": "вівсянка 75 г, молоко 150 мл, банани 105 г", "kcal": 441, "p": 15, "f": 8, "c": 74}, {"slot": "Обід", "name": "Курячі тефтелі, рис, салат з капусти й моркви", "items": "філе 160 г, цибуля 20 г, рис 90 г, капуста 100 г, морква 40 г, олія 8 г", "kcal": 612, "p": 47, "f": 12, "c": 76}, {"slot": "Перекус", "name": "Кефір і яблуко", "items": "кефір 250 мл, яблука 230 г", "kcal": 208, "p": 8, "f": 3, "c": 33}, {"slot": "Вечеря", "name": "Омлет, овочеве рагу", "items": "яйця 2 шт, картопля 155 г, капуста цвітна 150 г, морква 50 г, цибуля 20 г, олія 8 г", "kcal": 435, "p": 22, "f": 22, "c": 37}]}, {"day": "Неділя", "kcal": 1674, "p": 115, "f": 51, "c": 183, "meals": [{"slot": "Сніданок", "name": "Кисломолочний сир з яблуком і вівсянкою", "items": "сир 5% 170 г, яблука 210 г, вівсянка 40 г", "kcal": 444, "p": 35, "f": 12, "c": 48}, {"slot": "Обід", "name": "Запечене куряче філе, запечена картопля, салат з капусти й моркви", "items": "філе 160 г, картопля 280 г, капуста 100 г, морква 40 г, олія 10 г", "kcal": 527, "p": 46, "f": 14, "c": 54}, {"slot": "Перекус", "name": "Кефір, хліб", "items": "кефір 250 мл, хліб 40 г", "kcal": 186, "p": 10, "f": 3, "c": 27}, {"slot": "Вечеря", "name": "Гречка, 2 варені яйця, салат з буряка", "items": "гречка 70 г, яйця 2 шт, буряк 120 г, олія 7 г", "kcal": 517, "p": 25, "f": 22, "c": 55}]}], "shop": [{"key": "oats", "name": "Вівсяні пластівці", "buy": "1 пачка", "cost": 55, "est": true, "group": "Крупи, хліб, олія"}, {"key": "milk", "name": "Молоко 2,5%", "buy": "1 пачка ~900 мл", "cost": 68.5, "est": true, "group": "Молочне"}, {"key": "banana", "name": "Банани", "buy": "500 г", "cost": 36.25, "est": false, "group": "Овочі, фрукти"}, {"key": "fillet", "name": "Куряче філе", "buy": "1150 г", "cost": 304.62, "est": false, "group": "М’ясо, риба, яйця"}, {"key": "buckwheat", "name": "Гречка (ядриця)", "buy": "1 пачка 1 кг", "cost": 81.3, "est": false, "group": "Крупи, хліб, олія"}, {"key": "cabbage", "name": "Капуста білокачанна", "buy": "1000 г", "cost": 15.89, "est": false, "group": "Овочі, фрукти"}, {"key": "carrot", "name": "Морква", "buy": "550 г", "cost": 8.17, "est": false, "group": "Овочі, фрукти"}, {"key": "oil", "name": "Олія соняшникова", "buy": "1 пляшка 0,85 л", "cost": 87.8, "est": false, "group": "Крупи, хліб, олія"}, {"key": "kefir", "name": "Кефір 1%", "buy": "2 пляшки по 870 г", "cost": 143.4, "est": false, "group": "Молочне"}, {"key": "apple", "name": "Яблука", "buy": "1700 г", "cost": 45.56, "est": false, "group": "Овочі, фрукти"}, {"key": "onion", "name": "Цибуля ріпчаста", "buy": "250 г", "cost": 3.71, "est": false, "group": "Овочі, фрукти"}, {"key": "egg", "name": "Яйця С1", "buy": "11 шт", "cost": 44.22, "est": false, "group": "М’ясо, риба, яйця"}, {"key": "tvorog", "name": "Сир кисломолочний 5%", "buy": "2 пачки по 350 г", "cost": 173.0, "est": false, "group": "Молочне"}, {"key": "bread", "name": "Хліб житньо-пшеничний", "buy": "1 буханка", "cost": 38, "est": true, "group": "Крупи, хліб, олія"}, {"key": "cauli", "name": "Капуста цвітна", "buy": "700 г", "cost": 22.32, "est": false, "group": "Овочі, фрукти"}, {"key": "hake", "name": "Хек (філе, заморожений)", "buy": "600 г", "cost": 114.0, "est": true, "group": "М’ясо, риба, яйця"}, {"key": "potato", "name": "Картопля", "buy": "1100 г", "cost": 21.89, "est": false, "group": "Овочі, фрукти"}, {"key": "rice", "name": "Рис круглозернистий", "buy": "1 пачка 1 кг", "cost": 54.9, "est": false, "group": "Крупи, хліб, олія"}, {"key": "beet", "name": "Буряк", "buy": "400 г", "cost": 5.56, "est": false, "group": "Овочі, фрукти"}], "checkout": 1324, "used": 1000}};
+const ICON = {
+ 'Сніданок':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 6v3M5.6 10.6l1.6 1.6M18.4 10.6l-1.6 1.6"/></svg>',
+ 'Обід':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4"/></svg>',
+ 'Перекус':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7c-3-2-8-1-8 5s4 9 6 9c1 0 1.5-.5 2-.5s1 .5 2 .5c2 0 6-3 6-9s-5-7-8-5z"/><path d="M12 7c0-2 1-3 3-4"/></svg>',
+ 'Вечеря':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>'};
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
 const PREP = {
  sun:[["Запекти куряче філе","{f} г — 3 обіди"],["Зварити гречку","{b} г сухої — 3 обіди"],["Тушкована капуста з морквою","350 г капусти — вечеря Пн, обід Вт"],["Сирна запіканка","1 порція — сніданок Вт"],["Нашаткувати капусту з морквою","салат Пн–Ср, без заправки"],["Філе для тефтелей — у морозилку","{f} г"]],
- wed:[["Запекти хек з морквою й цибулею","{h} г — вечері Ср, Чт, Пт"],["Буряк у фользі в ту ж духовку","360 г — салат Чт, Пт, Нд"],["Курячі тефтелі + рис","{r} г рису — 3 обіди"],["Овочеве рагу","картопля, цвітна капуста, морква — 3 вечері"],["Сирна запіканка","1 порція — сніданок Чт"],["Нашаткувати капусту з морквою","салат Сб, Нд"]]
-};
+ wed:[["Запекти хек з морквою й цибулею","{h} г — вечері Ср, Чт, Пт"],["Буряк у фользі в ту ж духовку","360 г — салат Чт, Пт, Нд"],["Курячі тефтелі + рис","{r} г рису — 3 обіди"],["Овочеве рагу","картопля, цвітна капуста, морква — 3 вечері"],["Сирна запіканка","1 порція — сніданок Чт"],["Нашаткувати капусту з морквою","салат Сб, Нд"]]};
 const PREPQ = {1300:{f:420,b:190,h:510,r:175},1500:{f:450,b:245,h:540,r:225},1700:{f:480,b:300,h:585,r:280}};
-let K = 1500, DAY = 0, done = {};
-try{ const s = JSON.parse(localStorage.getItem('smp-state')||'{}'); if(s.K) K=s.K; if(s.done) done=s.done; }catch(e){}
-const save=()=>{ try{ localStorage.setItem('smp-state', JSON.stringify({K,done})); }catch(e){} };
+const DN=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+let K=1500, DAY=0, done={};
+try{const s=JSON.parse(localStorage.getItem('smp-state')||'{}'); if(s.K) K=s.K; if(s.done) done=s.done;}catch(e){}
+const save=()=>{try{localStorage.setItem('smp-state',JSON.stringify({K,done}));}catch(e){}};
 const $=id=>document.getElementById(id);
-const fmt=n=>n.toLocaleString('uk-UA',{maximumFractionDigits:0});
-const avg=(arr,k)=>Math.round(arr.reduce((a,d)=>a+d[k],0)/arr.length);
+const fmt=n=>Math.round(n).toLocaleString('uk-UA');
+const avg=(a,k)=>a.reduce((s,d)=>s+d[k],0)/a.length;
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800);}
-async function copy(text,msg){try{await navigator.clipboard.writeText(text);toast(msg);}catch(e){toast('Не вдалося скопіювати — виділіть текст вручну');}}
-
+async function copy(text,msg){try{await navigator.clipboard.writeText(text);toast(msg);}catch(e){toast('Не вдалося скопіювати');}}
 function renderTop(){
   const d=DATA[K];
-  document.querySelectorAll('[data-k]').forEach(b=>b.setAttribute('aria-pressed', String(+b.dataset.k===K)));
+  document.querySelectorAll('[data-k]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.k===K)));
   $('t-kcal').textContent=fmt(avg(d.days,'kcal'));
-  $('t-macro').textContent=`${avg(d.days,'p')} · ${avg(d.days,'f')} · ${avg(d.days,'c')}`;
+  $('t-macro').textContent=`${fmt(avg(d.days,'p'))} · ${fmt(avg(d.days,'f'))} · ${fmt(avg(d.days,'c'))}`;
   $('t-check').textContent=`~${fmt(d.checkout)} грн`;
   $('t-used').textContent=`з’їдено на ~${fmt(d.used)} грн, решта — запас`;
 }
 function renderMenu(){
   const d=DATA[K];
-  $('days').innerHTML=d.days.map((x,i)=>`<button aria-pressed="${i===DAY}" data-i="${i}">${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'][i]}<span>${x.kcal}</span></button>`).join('');
+  $('days').innerHTML=d.days.map((x,i)=>`<button aria-pressed="${i===DAY}" data-i="${i}">${DN[i]}<span>${x.kcal}</span></button>`).join('');
   $('days').querySelectorAll('button').forEach(b=>b.onclick=()=>{DAY=+b.dataset.i;renderMenu();});
-  const x=d.days[DAY];
-  $('dname').textContent=`${x.day} · ${x.kcal} ккал`;
-  const e=x.p*4+x.f*9+x.c*4;
-  $('mbar').innerHTML=`<i style="width:${x.p*4/e*100}%;background:var(--p)"></i><i style="width:${x.f*9/e*100}%;background:var(--f)"></i><i style="width:${x.c*4/e*100}%;background:var(--c)"></i>`;
-  $('mleg').innerHTML=`<span><b style="background:var(--p)"></b>Б ${x.p} г</span><span><b style="background:var(--f)"></b>Ж ${x.f} г</span><span><b style="background:var(--c)"></b>В ${x.c} г</span>`;
-  $('meals').innerHTML=x.meals.map(m=>`<div class="meal"><div class="slot">${m.slot}</div><div class="nm">${m.name}</div><div class="kc">${m.kcal} ккал<small>Б ${m.p} · Ж ${m.f} · В ${m.c}</small></div><div class="it">${m.items}</div></div>`).join('');
+  const x=d.days[DAY], e=x.p*4+x.f*9+x.c*4;
+  $('dname').textContent=x.day;
+  $('dkcal').innerHTML=`${x.kcal} <small>ккал</small>`;
+  const q=(k,v,s)=>`<div><span class="k">${k}</span><span class="v">${v} г</span><i><b style="width:${s}%"></b></i></div>`;
+  $('quad').innerHTML=q('Білки',x.p,x.p*4/e*100)+q('Жири',x.f,x.f*9/e*100)+q('Вуглеводи',x.c,x.c*4/e*100);
+  $('meals').innerHTML=x.meals.map(m=>`<article class="glass meal"><div class="ic">${ICON[m.slot]||''}</div><div><div class="slot">${m.slot}<b>${m.kcal} ккал</b></div><div class="nm">${m.name}</div><div class="it">${m.items}</div><div class="mm">Б ${m.p} · Ж ${m.f} · В ${m.c}</div></div></article>`).join('');
 }
 function renderShop(){
-  const d=DATA[K], groups={};
-  d.shop.forEach(r=>(groups[r.group]=groups[r.group]||[]).push(r));
+  const d=DATA[K], g={};
+  d.shop.forEach(r=>(g[r.group]=g[r.group]||[]).push(r));
   const order=['М’ясо, риба, яйця','Молочне','Крупи, хліб, олія','Овочі, фрукти'];
-  $('groups').innerHTML=order.filter(g=>groups[g]).map(g=>`<div class="group"><h3>${g}</h3>${groups[g].map(r=>{const id='c-'+r.key;const on=!!done[K+r.key];return `<label class="row${on?' done':''}" for="${id}"><input type="checkbox" id="${id}" data-key="${r.key}" ${on?'checked':''}><span class="n">${r.name}${r.est?'<span class="pill">оцінка</span>':''}</span><span class="q">${r.buy}</span><span class="pr">${r.cost.toFixed(0)} грн</span></label>`}).join('')}</div>`).join('');
+  $('groups').innerHTML=order.filter(k=>g[k]).map(k=>`<div class="col"><div class="grp">${k}</div>`+g[k].map(r=>{const id='c-'+r.key,on=!!done[K+r.key];return `<label class="glass item${on?' done':''}" for="${id}"><input type="checkbox" id="${id}" data-key="${r.key}" ${on?'checked':''}><span class="check">${CHECK}</span><span><span class="n">${r.name}</span>${r.est?'<span class="est">оцінка</span>':''}<span class="q">${r.buy}</span></span><span class="pr">${r.cost.toFixed(0)} грн</span></label>`}).join('')+'</div>').join('');
   $('groups').querySelectorAll('input').forEach(c=>c.onchange=()=>{done[K+c.dataset.key]=c.checked;save();renderShop();});
   const n=d.shop.length, got=d.shop.filter(r=>done[K+r.key]).length;
-  const spent=d.shop.filter(r=>done[K+r.key]).reduce((a,r)=>a+r.cost,0);
-  $('prog-t').textContent=`У кошику ${got} з ${n} · ${fmt(spent)} грн`;
+  $('prog-t').textContent=`У кошику ${got} з ${n} · ${fmt(d.shop.filter(r=>done[K+r.key]).reduce((a,r)=>a+r.cost,0))} грн`;
   $('prog-b').style.width=(got/n*100)+'%';
-  $('sum').textContent=`~${fmt(d.checkout)} грн`;
+  $('s-n').textContent=n; $('s-used').textContent=`~${fmt(d.used)} грн`; $('s-stock').textContent=`~${fmt(d.checkout-d.used)} грн`; $('s-tot').textContent=`~${fmt(d.checkout)} грн`;
 }
 function renderPrep(){
   const q=PREPQ[K], f=s=>s.replace(/\{(\w)\}/g,(_,k)=>q[k]);
-  const li=a=>a.map(([t,e])=>`<li>${t}<em>${f(e)}</em></li>`).join('');
+  const li=a=>a.map(([t,e])=>`<li><span>${t}<em>${f(e)}</em></span></li>`).join('');
   $('prep-sun').innerHTML=li(PREP.sun); $('prep-wed').innerHTML=li(PREP.wed);
 }
-function listText(){return DATA[K].shop.map(r=>`${r.name} — ${r.buy}`).join('\n');}
+function show(p){
+  document.querySelectorAll('[role="tab"]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.p===p)));
+  ['menu','shop','prep'].forEach(k=>$('p-'+k).hidden=(k!==p));
+}
+const listText=()=>DATA[K].shop.map(r=>`${r.name} — ${r.buy}`).join('\n');
 $('copy-list').onclick=()=>copy(`Smart Meal Plan · Економ · ${K} ккал\n`+listText(),'Список скопійовано');
-$('copy-silpo').onclick=()=>copy(`Збери, будь ласка, кошик у Сільпо за цим списком на один тиждень. Для кожної позиції обери найдешевший відповідний товар або акцію, без зайвих брендів. Покажи підсумок і загальну суму перед оформленням.\n\n`+listText(),'Запит скопійовано — вставте його в чат');
+$('copy-silpo').onclick=()=>copy(`Збери, будь ласка, кошик у Сільпо за цим списком на один тиждень. Для кожної позиції обери найдешевший відповідний товар або акцію. Покажи підсумок і загальну суму перед оформленням.\n\n`+listText(),'Запит скопійовано');
+document.querySelectorAll('[role="tab"]').forEach(t=>t.onclick=()=>show(t.dataset.p));
 document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{K=+b.dataset.k;save();all();});
-document.querySelectorAll('[role="tab"]').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('[role="tab"]').forEach(x=>x.setAttribute('aria-selected',String(x===t)));
-  ['menu','shop','prep'].forEach(p=>$('p-'+p).hidden=(p!==t.dataset.p));
-});
 function all(){renderTop();renderMenu();renderShop();renderPrep();}
 all();
 </script>
